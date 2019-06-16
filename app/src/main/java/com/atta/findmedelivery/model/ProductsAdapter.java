@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.atta.findmedelivery.R;
+import com.atta.findmedelivery.menu.ShopMenuContract;
+import com.atta.findmedelivery.products.ProductsContract;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -22,10 +24,21 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
     private List<Product> products;
 
     Context mContext;
+    ProductsContract.View productsView;
+    ShopMenuContract.View menuView;
 
-    public ProductsAdapter(Context mContext, List<Product> products) {
+
+    public ProductsAdapter(ProductsContract.View productsView, Context mContext, List<Product> products) {
         this.products = products;
         this.mContext = mContext;
+        this.productsView = productsView;
+    }
+
+
+    public ProductsAdapter(ShopMenuContract.View menuView, Context mContext, List<Product> products) {
+        this.products = products;
+        this.mContext = mContext;
+        this.menuView = menuView;
     }
 
     @NonNull
@@ -53,7 +66,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
         if (inCart){
 
             myViewHolder.linearLayout.setVisibility(View.VISIBLE);
-            myViewHolder.addToCard.setVisibility(View.GONE);
+            myViewHolder.addProduct.setVisibility(View.GONE);
             myViewHolder.constraintLayout.setBackgroundResource(R.drawable.border);
             final int cartCount = product.getCartCount();
 
@@ -70,53 +83,44 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
         myViewHolder.nameTv.setText(name);
         myViewHolder.brandTv.setText(brand);
         myViewHolder.amountTv.setText(amount);
-        myViewHolder.priceTv.setText("EGP" + price);
+        if (price != 0.0){
+            myViewHolder.priceTv.setText("EGP" + price);
+        }else {
+            myViewHolder.priceTv.setVisibility(View.GONE);
+            myViewHolder.addProduct.setText("ADD");
+        }
+
 /*
         if (product.getStock() > 0){
-            myViewHolder.addToCard.setOnClickListener(new_icon View.OnClickListener() {
+            myViewHolder.addProduct.setOnClickListener(new_icon View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     myViewHolder.linearLayout.setVisibility(View.VISIBLE);
-                    myViewHolder.addToCard.setVisibility(View.GONE);
+                    myViewHolder.addProduct.setVisibility(View.GONE);
                     myViewHolder.constraintLayout.setBackgroundResource(R.drawable.border);
                     mView.addToCart(product);
                 }
             });
         }else {
-            myViewHolder.addToCard.setBackgroundColor(mContext.getResources().getColor(R.color.red));
-            myViewHolder.addToCard.setText("out of stock");
+            myViewHolder.addProduct.setBackgroundColor(mContext.getResources().getColor(R.color.red));
+            myViewHolder.addProduct.setText("out of stock");
         }
 
 
+*/
 
-        myViewHolder.add.setOnClickListener(new_icon View.OnClickListener() {
+        myViewHolder.addProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shopMenuPresenter.increaseCartItem(product.getId());
-                product.setCartCount(product.getCartCount()+1);
-                myViewHolder.count.setText(String.valueOf(product.getCartCount()));
+                if (price != 0.0){
+                    menuView.showPopup(product.getId(), product.getPrice(), product.getStock());
+                }else {
+
+                    productsView.showPopup(product.getId());
+                }
+                //mView.addToCart(product);
             }
         });
-
-        myViewHolder.remove.setOnClickListener(new_icon View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (product.getCartCount() == 1) {
-                    myViewHolder.linearLayout.setVisibility(View.INVISIBLE);
-                    myViewHolder.addToCard.setVisibility(View.VISIBLE);
-                    myViewHolder.constraintLayout.setBackground(null);
-                    product.setInCart(false);
-                    product.setCartCount(0);
-                    mView.decreaseCartSign();
-                    shopMenuPresenter.removeCartItem(product.getId());
-
-                }else {
-                    shopMenuPresenter.decreaseCartItem(product.getId());
-                    product.setCartCount(product.getCartCount()-1);
-                    myViewHolder.count.setText(String.valueOf(product.getCartCount()));
-                }
-            }
-        });*/
 
     }
 
@@ -128,7 +132,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView nameTv, brandTv, amountTv, priceTv, addToCard, count;
+        TextView nameTv, brandTv, amountTv, priceTv, addProduct, count;
         ImageView image, add, remove;
 
         ConstraintLayout constraintLayout;
@@ -146,7 +150,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.MyView
             remove = itemView.findViewById(R.id.remove);
             count = itemView.findViewById(R.id.item_count);
 
-            addToCard = itemView.findViewById(R.id.add_to_cart);
+            addProduct = itemView.findViewById(R.id.add_to_cart);
 
             constraintLayout = itemView.findViewById(R.id.layout);
 

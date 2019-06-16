@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import com.atta.findmedelivery.login.LoginActivity;
 import com.atta.findmedelivery.main.MainActivity;
+import com.atta.findmedelivery.menu.MenuActivity;
 
 public class SessionManager {
 
@@ -54,6 +55,8 @@ public class SessionManager {
 
     private static final String KEY_USER_TOKEN = "token";
 
+    private static final String KEY_USER_TYPE = "type";
+
 
 
     // Constructor
@@ -87,8 +90,8 @@ public class SessionManager {
 
 
     // Get Login State
-    public String  getEmail(){
-        return pref.getString(KEY_EMAIL, "no email");
+    public int  getType(){
+        return pref.getInt(KEY_USER_TYPE, 0);
     }
 
     // Get Login State
@@ -109,6 +112,7 @@ public class SessionManager {
         editor.putInt(KEY_ID, user.getId());
         editor.putString(KEY_USER_NAME, user.getName());
         editor.putString(KEY_USER_PHONE, user.getPhone());
+        editor.putInt(KEY_USER_TYPE, user.getType());
         editor.apply();
 
 
@@ -142,6 +146,15 @@ public class SessionManager {
         // Check login status
         if(this.isLoggedIn()){
 
+            if (getType() == 2){
+                Intent intent = new Intent(_context, MenuActivity.class);
+                // Closing all the Activities
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                // Add new_icon Flag to start new_icon Activity
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                _context.startActivity(intent);
+            }else {
             // user is logged in redirect him to Main Activity
             Intent i = new Intent(_context, MainActivity.class);
             // Closing all the Activities
@@ -151,7 +164,8 @@ public class SessionManager {
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             // Staring Login Activity
-            _context.startActivity(i);
+            _context.startActivity(i);}
+
 
         }else if (this.isSkipped()){
             // user is logged in redirect him to Main Activity

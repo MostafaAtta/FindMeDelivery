@@ -99,4 +99,81 @@ public class FragmentsPresenter implements FragmentsContract.Presenter {
         });
     }
 
+
+    @Override
+    public void getAllOrders(String category) {
+
+        //building retrofit object
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(APIUrl.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        //Defining retrofit api service
+        APIService service = retrofit.create(APIService.class);
+
+        //Defining the user object as we need to pass it with the call
+        //User user = new_icon User(name, email, password, phone, birthdayString, locationSting);
+
+        Call<DeliveryOrdersResult> call;
+
+        switch (category){
+            case "current":
+
+                //defining the call
+                call = service.getAllCurrentOrders();
+                break;
+            case "old":
+
+                //defining the call
+                call = service.getAllOldOrders();
+                break;
+            default:
+
+                //defining the call
+                call = service.getAllCurrentOrders();
+                break;
+        }
+
+
+        //calling the api
+        call.enqueue(new Callback<DeliveryOrdersResult>() {
+            @Override
+            public void onResponse(Call<DeliveryOrdersResult> call, Response<DeliveryOrdersResult> response) {
+
+                if (response.body() != null){
+                    if (!response.body().getError()){
+
+                        if (response.body().getOrders() != null){
+
+
+                            ArrayList<Order> orders = response.body().getOrders();
+
+                            if (orders.size() > 0){
+
+                                mView.showRecyclerView(orders);
+                            }else {
+
+                                mView.showMessage("No orders added");
+                            }
+                        }else {
+
+                            mView.showMessage("No orders added");
+                        }
+
+                    }
+                }else {
+                    mView.showMessage("An error");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DeliveryOrdersResult> call, Throwable t) {
+
+                mView.showMessage(t.getMessage());
+            }
+        });
+    }
+
 }

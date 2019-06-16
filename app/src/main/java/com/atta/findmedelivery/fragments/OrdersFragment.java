@@ -48,7 +48,13 @@ public class OrdersFragment extends Fragment implements FragmentsContract.View {
 
             category = getArguments().getString("category");
 
-            fragmentsPresenter.getOrders(SessionManager.getInstance(getContext()).getUserId(),category);
+            if (SessionManager.getInstance(getContext()).getType() == 1 ){
+
+                fragmentsPresenter.getAllOrders(category);
+            }else if (SessionManager.getInstance(getContext()).getType() == 0) {
+
+                fragmentsPresenter.getOrders(SessionManager.getInstance(getContext()).getUserId(), category);
+            }
         }
 
 
@@ -64,7 +70,18 @@ public class OrdersFragment extends Fragment implements FragmentsContract.View {
                         mySwipeRefreshLayout.setRefreshing(false);
 
 
-                        fragmentsPresenter.getOrders(SessionManager.getInstance(getContext()).getUserId(),category);
+                        if (getArguments() != null) {
+
+                            category = getArguments().getString("category");
+
+                            if (SessionManager.getInstance(getContext()).getType() == 1 ){
+
+                                fragmentsPresenter.getAllOrders(category);
+                            }else if (SessionManager.getInstance(getContext()).getType() == 0) {
+
+                                fragmentsPresenter.getOrders(SessionManager.getInstance(getContext()).getUserId(), category);
+                            }
+                        }
                     }
                 }
         );

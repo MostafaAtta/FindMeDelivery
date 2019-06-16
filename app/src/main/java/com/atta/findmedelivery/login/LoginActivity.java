@@ -12,15 +12,20 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.atta.findmedelivery.R;
 import com.atta.findmedelivery.main.MainActivity;
+import com.atta.findmedelivery.menu.MenuActivity;
 import com.atta.findmedelivery.model.SessionManager;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.View, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
 
+    Switch adminSwitch;
+
+    boolean adminLogin;
 
     ProgressDialog progressDialog;
 
@@ -52,6 +57,14 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         // National ID, Password input text
         userNameText = findViewById(R.id.username);
         passwordText = findViewById(R.id.password);
+        adminSwitch = findViewById(R.id.admin_switch);
+
+        adminSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                adminLogin = isChecked;
+            }
+        });
 
         // Login button
         login = findViewById(R.id.btn_login);
@@ -86,6 +99,15 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     public void navigateToMain() {
 
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
+    @Override
+    public void navigateToMenu() {
+
+        Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
         startActivity(intent);
         finish();
     }
@@ -125,7 +147,10 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
             }
 
             progressDialog.show();
-            loginPresenter.login(userNameText.getText().toString(),passwordText.getText().toString());
+
+            if (adminLogin){
+                loginPresenter.adminLogin(userNameText.getText().toString(),passwordText.getText().toString());
+            }else loginPresenter.login(userNameText.getText().toString(),passwordText.getText().toString());
         }
     }
 

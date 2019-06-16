@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,22 +14,28 @@ import android.widget.Toast;
 
 import com.atta.findmedelivery.R;
 import com.atta.findmedelivery.main.MainActivity;
+import com.atta.findmedelivery.model.LinearAdapter;
 import com.atta.findmedelivery.model.Order;
 import com.atta.findmedelivery.model.Product;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OrderDetailsActivity extends AppCompatActivity implements View.OnClickListener, OrderDetailsContract.View{
 
     Order order;
 
-    TextView timeTv, addressTv, mobileTv, subTotalTv, deliveryFeesTv, discountTv, totalTx;
+    List<Product> products;
+
+    TextView timeTv, addressTv, mobileTv, subTotalTv, deliveryFeesTv, totalTx;
 
     RecyclerView recyclerView;
 
     ImageView submittedImage, preparedImage, deliveredImage, backtoMain;
 
     OrderDetailsPresenter orderDetailsPresenter;
+
+    LinearAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,8 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
             order = (Order) getIntent().getSerializableExtra("order");
 
             setOrderData();
+
+            orderDetailsPresenter.getOrderDishes(order.getId());
         }
 
 
@@ -57,7 +67,6 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         mobileTv.setOnClickListener(this);
         subTotalTv = findViewById(R.id.tv_subtotal_sum);
         deliveryFeesTv = findViewById(R.id.tv_delivery_sum);
-        discountTv = findViewById(R.id.tv_discount_sum);
         totalTx = findViewById(R.id.tv_total_sum);
 
         recyclerView = findViewById(R.id.recycler_cart2);
@@ -76,6 +85,9 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
         timeTv.setText(order.getOrderTime());
         addressTv.setText(order.getFullAddress().getFullAddress());
         mobileTv.setText(order.getMobile());
+        subTotalTv.setText(order.getSubtotalPrice() + " EGP");
+        deliveryFeesTv.setText(order.getDelivery() + " EGP");
+        totalTx.setText(order.getTotalPrice() + " EGP");
 
         switch (order.getStatus()){
             case 0:
@@ -159,7 +171,12 @@ public class OrderDetailsActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void showRecyclerView(ArrayList<Product> products) {
+        this.products = products;
 
+        myAdapter = new LinearAdapter(this, products, order);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(myAdapter);
     }
 
 

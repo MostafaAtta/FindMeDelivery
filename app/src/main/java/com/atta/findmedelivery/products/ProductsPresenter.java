@@ -1,4 +1,6 @@
-package com.atta.findmedelivery.orderdetails;
+package com.atta.findmedelivery.products;
+
+import android.content.Context;
 
 import com.atta.findmedelivery.model.APIService;
 import com.atta.findmedelivery.model.APIUrl;
@@ -14,17 +16,21 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class OrderDetailsPresenter implements OrderDetailsContract.Presenter {
-
-    private OrderDetailsContract.View mView;
+public class ProductsPresenter implements ProductsContract.Presenter {
 
 
-    public OrderDetailsPresenter(OrderDetailsContract.View mView) {
+    private ProductsContract.View mView;
+
+    private Context mContext;
+
+
+    public ProductsPresenter(Context mContext, ProductsContract.View mView) {
         this.mView = mView;
+        this.mContext = mContext;
     }
 
     @Override
-    public void getOrderDishes(int orderId) {
+    public void getProducts(String cat) {
 
         //building retrofit object
         Retrofit retrofit = new Retrofit.Builder()
@@ -36,10 +42,10 @@ public class OrderDetailsPresenter implements OrderDetailsContract.Presenter {
         APIService service = retrofit.create(APIService.class);
 
         //Defining the user object as we need to pass it with the call
-        //User user = new_icon User(name, email, password, phone, birthdayString, locationSting);
+        //User user = new User(name, email, password, phone, birthdayString, locationSting);
 
         //defining the call
-        Call<Products> call = service.getOrderProducts(orderId);
+        Call<Products> call = service.getCategoryProducts(cat);
 
         //calling the api
         call.enqueue(new Callback<Products>() {
@@ -56,12 +62,11 @@ public class OrderDetailsPresenter implements OrderDetailsContract.Presenter {
                             if (products.size() > 0){
 
                                 mView.showRecyclerView(products);
+
                             }
                         }else {
                             mView.showMessage("An error");
                         }
-
-
                 }else {
                     mView.showMessage("An error");
                 }
@@ -76,8 +81,9 @@ public class OrderDetailsPresenter implements OrderDetailsContract.Presenter {
         });
     }
 
+
     @Override
-    public void updateOrderStatus(int status, int orderId) {
+    public void addShopProduct(int shopId, int itemId, int stock, double price) {
 
         //building retrofit object
         Retrofit retrofit = new Retrofit.Builder()
@@ -89,10 +95,10 @@ public class OrderDetailsPresenter implements OrderDetailsContract.Presenter {
         APIService service = retrofit.create(APIService.class);
 
         //Defining the user object as we need to pass it with the call
-        //User user = new_icon User(name, email, password, phone, birthdayString, locationSting);
+        //User user = new User(name, email, password, phone, birthdayString, locationSting);
 
         //defining the call
-        Call<Result> call = service.updateOrderStatus(status, orderId);
+        Call<Result> call = service.addShopProduct(shopId, itemId, stock, price);
 
         //calling the api
         call.enqueue(new Callback<Result>() {
@@ -101,9 +107,14 @@ public class OrderDetailsPresenter implements OrderDetailsContract.Presenter {
 
                 if (response.body() != null){
 
+                    if (response.body().getMessage() != null){
 
-                    mView.showMessage(response.body().getMessage());
 
+
+                        mView.showMessage(response.body().getMessage());
+                    }else {
+                        mView.showMessage("An error");
+                    }
                 }else {
                     mView.showMessage("An error");
                 }
@@ -117,6 +128,5 @@ public class OrderDetailsPresenter implements OrderDetailsContract.Presenter {
             }
         });
     }
-
 
 }

@@ -9,4 +9,7 @@
     <color name="buttonColor">#0D47A1</color>
     <color name="red">#F44336</color>
     <color name="iron">#CCCCCC</color>
+
+
+    <color name="white">#CCCCCC</color>
 </resources>

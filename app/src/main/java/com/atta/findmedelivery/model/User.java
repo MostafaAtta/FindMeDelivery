@@ -2,7 +2,7 @@ package com.atta.findmedelivery.model;
 
 public class User {
 
-    private int id;
+    private int id, type;
     private String username, password, phone;
 
 
@@ -21,6 +21,13 @@ public class User {
         this.phone = phone;
     }
 
+    public User(int id, int type, String username, String password, String phone) {
+        this.id = id;
+        this.type = type;
+        this.username = username;
+        this.password = password;
+        this.phone = phone;
+    }
 
     public int getId() {
         return id;
@@ -38,4 +45,7 @@ public class User {
         return phone;
     }
 
+    public int getType() {
+        return type;
+    }
 }

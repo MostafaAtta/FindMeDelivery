@@ -37,6 +37,17 @@ public class Product implements Serializable {
         this.category = category;
     }
 
+
+    public Product(int id, String name, String description, String brand, String amount, String image, String category) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.brand = brand;
+        this.amount = amount;
+        this.image = image;
+        this.category = category;
+    }
+
     public Product(int id, int shopId, int stock, int cartCount, double price, String name, String description, String brand, String amount, String image, String category, boolean inCart) {
         this.id = id;
         this.shopId = shopId;

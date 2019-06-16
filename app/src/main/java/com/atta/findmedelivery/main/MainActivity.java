@@ -1,5 +1,6 @@
 package com.atta.findmedelivery.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.atta.findmedelivery.addshop.AddShopActivity;
 import com.atta.findmedelivery.R;
 import com.atta.findmedelivery.fragments.OrdersFragment;
 import com.atta.findmedelivery.model.SessionManager;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setContentView(R.layout.activity_main);
 
 
+
         BottomNavigationView navigation = findViewById(R.id.nav_view);
         navigation.setOnNavigationItemSelectedListener(this);
 
@@ -56,6 +59,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem item = menu.findItem(R.id.action_addShop);
+        if (SessionManager.getInstance(MainActivity.this).getType() == 1){
+            item.setVisible(true);
+        }
         return true;
     }
 
@@ -70,6 +77,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (id == R.id.action_logout) {
 
             SessionManager.getInstance(this).logoutUser();
+            finish();
+            return true;
+        }else if (id == R.id.action_addShop) {
+
+            Intent intent = new Intent(MainActivity.this, AddShopActivity.class);
+            startActivity(intent);
             return true;
         }
 

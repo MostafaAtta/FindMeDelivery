@@ -74,6 +74,54 @@ public class LoginPresenter implements LoginContract.Presenter{
     }
 
     @Override
+    public void adminLogin(String username, String password) {
+
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(APIUrl.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        APIService service = retrofit.create(APIService.class);
+
+
+        Call<Result> call = service.adminLogin(username, password);
+
+        call.enqueue(new Callback<Result>() {
+            @Override
+            public void onResponse(Call<Result> call, Response<Result> response) {
+
+
+                mView.dismissProgressDialog();
+                if (!response.body().getError()) {
+                    mView.showMessage();
+                    SessionManager.getInstance(mContext).createLoginSession(response.body().getUser());
+                    if (response.body().getUser().getType() == 2){
+                        mView.navigateToMenu();
+                    }else mView.navigateToMain();
+                } else {
+
+                    mView.showError("Invalid username or password");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<Result> call, Throwable t) {
+
+
+                mView.dismissProgressDialog();
+
+                mView.showError(t.getMessage());
+
+
+
+            }
+        });
+
+    }
+    @Override
     public boolean validate(String username, String password) {
 
 

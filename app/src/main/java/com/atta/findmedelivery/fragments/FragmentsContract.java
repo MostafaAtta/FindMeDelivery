@@ -19,5 +19,7 @@ public interface FragmentsContract {
     interface Presenter {
 
         void getOrders(int userId, String category) ;
+
+        void getAllOrders(String category);
     }
 }

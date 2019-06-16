@@ -9,10 +9,16 @@
         android:roundIcon="@drawable/scooter1"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".addshop.AddShopActivity"></activity>
+        <activity android:name=".products.ProductsActivity" />
+        <activity
+            android:name=".menu.MenuActivity"
+            android:theme="@style/AppTheme2" />
         <activity
             android:name=".main.MainActivity"
-            android:label="@string/title_activity_main"></activity>
-        <activity android:name=".orderdetails.OrderDetailsActivity"
+            android:label="@string/title_activity_main" />
+        <activity
+            android:name=".orderdetails.OrderDetailsActivity"
             android:theme="@style/AppTheme2" />
         <activity
             android:name=".SplashScreenActivity"

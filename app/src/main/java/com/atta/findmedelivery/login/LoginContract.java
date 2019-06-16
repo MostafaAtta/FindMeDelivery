@@ -17,12 +17,15 @@ public interface LoginContract {
         void skipToMain();
 
         void dismissProgressDialog();
+
+        void navigateToMenu();
     }
 
     interface Presenter{
 
         void login(String email, String password);
 
+        void adminLogin(String email, String password);
 
         boolean validate(String email, String password);
     }
